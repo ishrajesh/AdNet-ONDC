@@ -47,15 +47,15 @@ const Products = () => {
   if (isSearchAvailable && isSubCatAvailable && isCatAvailable) {
     return (
       <>
-        <SubCategoriesHeader />
-        <ProductList />
+        {/* <SubCategoriesHeader />
+        <ProductList /> */}
       </>
     );
   } else if (!isSearchAvailable && isSubCatAvailable && isCatAvailable) {
     return (
       <>
-        <SubCategoriesHeader />
-        <ProductList />
+        {/* <SubCategoriesHeader /> */}
+        {/* <ProductList /> */}
       </>
     );
   } else if (!isSearchAvailable && !isSubCatAvailable && isCatAvailable) {
@@ -72,13 +72,13 @@ const Products = () => {
     return (
       <>
 
-      <ProductList />
+      {/* <ProductList /> */}
       </>
     );
   } else if (isSearchAvailable && !isSubCatAvailable && isCatAvailable) {
     return (
       <>
-        <ProductList />
+        {/* <ProductList /> */}
       </>
     );
   } else {

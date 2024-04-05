@@ -206,7 +206,7 @@ const Home = () => {
                 </Grid>
             </Grid>
 
-            <TopBrands />
+            {/* <TopBrands /> */}
         </Box>
     )
 };
