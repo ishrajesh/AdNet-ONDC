@@ -29,8 +29,10 @@ const ProductGridView = (props) => {
     handleAddToCart = () => {},
     getProductDetails,
     productLoading,
+    isSponsored
   } = props;
   const { id, descriptor, provider_details } = product;
+  console.log(isSponsored)
   const { name: provider_name } = bpp_provider_descriptor;
   const { name: product_name, images, symbol } = descriptor;
 
@@ -65,6 +67,13 @@ const ProductGridView = (props) => {
           Buy Now
         </Button> */}
       </Card>
+        {(isSponsored ) ? 
+           <h1 component="div" variant="body" className="text-sm font-bold pt-2 text-gray-800/80	">
+           Sponsored
+         </h1>
+         
+         : null
+      }
       <Typography component="div" variant="body" className={classes.productNameTypo}>
         {product_name}
       </Typography>

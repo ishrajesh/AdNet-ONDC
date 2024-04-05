@@ -61,15 +61,18 @@ const Products = () => {
   } else if (!isSearchAvailable && !isSubCatAvailable && isCatAvailable) {
     return (
       <>
+      {/* This is Working */}
         <CategoriesHeader />
         <SubCategories />
         <CategoryBrands />
+        <ProductList />
       </>
     );
   } else if (isSearchAvailable && !isSubCatAvailable && !isCatAvailable) {
     return (
       <>
-        <ProductList />
+
+      <ProductList />
       </>
     );
   } else if (isSearchAvailable && !isSubCatAvailable && isCatAvailable) {

@@ -35,6 +35,8 @@ import { CartContext } from "../../../context/cartContext";
 import { SearchContext } from "../../../context/searchContext";
 import Loading from "../../shared/loading/loading";
 
+import AllProductsList from "./AllProducts"
+
 const ProductList = () => {
   const classes = useStyles();
   const locationData = useLocation();
@@ -48,6 +50,7 @@ const ProductList = () => {
 
   const [viewType, setViewType] = useState("grid");
   const [products, setProducts] = useState([]);
+  const [sponsoredProducts, setSponsoredProducts] = useState([]);
   const [totalProductCount, setTotalProductCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
@@ -73,36 +76,43 @@ const ProductList = () => {
   const getAllProducts = async (searchName) => {
     setIsLoading(true);
     try {
-      let paginationData = Object.assign(
-        {},
-        JSON.parse(JSON.stringify(paginationModel))
-      );
-      paginationData.searchData = paginationData.searchData.filter(
-        (item) => item.selectedValues.length > 0
-      );
-      paginationData.searchData = paginationData.searchData.reduce(function (
-        r,
-        e
-      ) {
-        r[e.code] = e.selectedValues.join();
-        return r;
-      },
-      {});
-      paginationData.searchData.pageNumber = paginationData.page;
-      paginationData.searchData.limit = paginationData.pageSize;
-      if (searchName) {
-        paginationData.searchData.name = searchName || "";
-      } else {
-      }
-      if (subCategoryName) {
-        paginationData.searchData.categoryIds = subCategoryName || "";
-      } else {
-      }
-      const data = await cancellablePromise(
-        getAllProductRequest(paginationData.searchData)
-      );
-      setProducts(data.data);
+      // let paginationData = Object.assign(
+      //   {},
+      //   JSON.parse(JSON.stringify(paginationModel))
+      // );
+      // paginationData.searchData = paginationData.searchData.filter(
+      //   (item) => item.selectedValues.length > 0
+      // );
+      // paginationData.searchData = paginationData.searchData.reduce(function (
+      //   r,
+      //   e
+      // ) {
+      //   r[e.code] = e.selectedValues.join();
+      //   return r;
+      // },
+      // {});
+      // paginationData.searchData.pageNumber = paginationData.page;
+      // paginationData.searchData.limit = paginationData.pageSize;
+      // if (searchName) {
+      //   paginationData.searchData.name = searchName || "";
+      // } else {
+      // }
+      // if (subCategoryName) {
+      //   paginationData.searchData.categoryIds = subCategoryName || "";
+      // } else {
+      // }
+      // const data = await cancellablePromise(
+      //   getAllProductRequest(paginationData.searchData)
+      // );
+
+      const data = AllProductsList.response;
+      console.log(data.response);
+
+      setProducts(data.data)
+
+      setSponsoredProducts(data.data.filter((item) => item.isSponsored))
       setTotalProductCount(data.count);
+
     } catch (err) {
       dispatch({
         type: toast_actions.ADD_TOAST,
@@ -187,12 +197,12 @@ const ProductList = () => {
     }
   }, [subCategoryName]);
 
-  useEffect(() => {
-    if (locationData) {
-      const searchName = query.get("s");
-      getAllProducts(searchName);
-    }
-  }, [paginationModel]);
+  // useEffect(() => {
+  //   if (locationData) {
+  //     const searchName = query.get("s");
+  //     getAllProducts(searchName);
+  //   }
+  // }, [paginationModel]);
 
   useEffect(() => {
     // TODO: Check how many times use effect is being called after mmi call removal
@@ -387,9 +397,8 @@ const ProductList = () => {
                 color="inherit"
                 // to={`/category/${categoryName}`}
                 onClick={updateQueryParams}
-                href={`/application/products?${
-                  searchProductName ? `s=${searchProductName}&` : ""
-                }${categoryName ? `c=${categoryName}` : ""}`}
+                href={`/application/products?${searchProductName ? `s=${searchProductName}&` : ""
+                  }${categoryName ? `c=${categoryName}` : ""}`}
               >
                 {categoryName}
               </MuiLink>
@@ -468,9 +477,9 @@ const ProductList = () => {
               <Loading />
             </Grid>
           ) : (
-            <>
+            <main className="flex sm:gap-2 flex-col-reverse sm:flex sm:flex-row-reverse  ">
               {products.length > 0 ? (
-                <>
+                <main className=" flex gap-2 flex-wrap">
                   {products.map((productItem, ind) => {
                     if (viewType === "list") {
                       return (
@@ -484,6 +493,7 @@ const ProductList = () => {
                           xl={12}
                           className={classes.listViewContainer}
                         >
+
                           <ProductListView
                             product={productItem?.item_details}
                             productId={productItem.id}
@@ -507,6 +517,7 @@ const ProductList = () => {
                     } else {
                       return (
                         <Grid
+                          className="mt-4"
                           key={`product-item-${ind}`}
                           item
                           xs={12}
@@ -515,8 +526,10 @@ const ProductList = () => {
                           lg={2}
                           xl={2}
                         >
+                        
                           <ProductGridView
                             product={productItem?.item_details}
+                            isSponsored = {productItem.isSponsored}
                             productId={productItem.id}
                             price={productItem?.item_details?.price}
                             bpp_provider_descriptor={
@@ -537,13 +550,61 @@ const ProductList = () => {
                       );
                     }
                   })}
-                </>
+
+                </main>
               ) : (
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Typography variant="body1">No Products available</Typography>
                 </Grid>
               )}
-            </>
+              {/* <main className="rounded-xl sm:w-[20%] bg-gray-800/40">
+                <h1 className="text-center  m-0 p-2 text-2xl">Sponsored Posts</h1>
+                {console.log(sponsoredProducts)}
+                {sponsoredProducts.length > 0 ? (
+                  <main className="flex sm:flex-col gap-4  overflow-x-scroll overflow-y-hidden ">
+                    {sponsoredProducts.map((productItem, ind) => {
+                        return (
+                          <Grid
+                            className="max-w-[100%] px-8 mx-2 justify-center align-center mx-auto"
+                            style={{maxWidth:"100% !important"}}
+                            key={`product-item-${ind}`}
+                            item
+                            xs={12}
+                            sm={12}
+                            md={10}
+                            lg={10}
+                            xl={10}
+                          >
+                            <ProductGridView
+                              product={productItem?.item_details}
+                              productId={productItem.id}
+                              price={productItem?.item_details?.price}
+                              bpp_provider_descriptor={
+                                productItem?.provider_details?.descriptor
+                              }
+                              bpp_id={productItem?.bpp_details?.bpp_id}
+                              location_id={
+                                productItem?.location_details
+                                  ? productItem.location_details?.id
+                                  : ""
+                              }
+                              bpp_provider_id={productItem?.provider_details?.id}
+                              getProductDetails={getProductDetails}
+                              handleAddToCart={addToCart}
+                              productLoading={productLoading}
+                            />
+                          </Grid>
+                        );
+                      }
+                    )}
+                  </main>
+                ) : (
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Typography variant="body1">No Products available</Typography>
+                  </Grid>
+                )}
+              </main> */}
+            </main>
           )}
         </Grid>
       </Grid>
